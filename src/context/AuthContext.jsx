@@ -20,8 +20,8 @@ export function AuthProvider({ children }) {
     if (!found) return { error: 'Usuário não encontrado' }
     if (found.password !== password) return { error: 'Senha incorreta' }
     const { password: _, ...safeUser } = found
-    localStorage.setItem(SESSION_KEY, JSON.stringify(found))
-    setUser(found)
+    localStorage.setItem(SESSION_KEY, JSON.stringify(safeUser))
+    setUser(safeUser)
     return { user: safeUser }
   }, [])
 
@@ -34,13 +34,15 @@ export function AuthProvider({ children }) {
     const existing = getUserByUsername(userData.username)
     if (existing) return { error: 'Nome de usuário já está em uso' }
     const newUser = createUser(userData)
-    localStorage.setItem(SESSION_KEY, JSON.stringify(newUser))
-    setUser(newUser)
-    return { user: newUser }
+    const { password: _, ...safeUser } = newUser
+    localStorage.setItem(SESSION_KEY, JSON.stringify(safeUser))
+    setUser(safeUser)
+    return { user: safeUser }
   }, [])
 
   const updateSession = useCallback((updates) => {
-    const updated = { ...user, ...updates }
+    const { password: _, ...safeUpdates } = updates
+    const updated = { ...user, ...safeUpdates }
     localStorage.setItem(SESSION_KEY, JSON.stringify(updated))
     setUser(updated)
   }, [user])

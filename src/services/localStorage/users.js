@@ -2,6 +2,12 @@ import { generateId } from '../../utils/formatters.js'
 
 const KEY = 'bebop_users'
 
+function secureRandInt(max) {
+  const arr = new Uint8Array(1)
+  crypto.getRandomValues(arr)
+  return arr[0] % max
+}
+
 export function getUsers() {
   try {
     return JSON.parse(localStorage.getItem(KEY) || '[]')
@@ -30,7 +36,7 @@ export function createUser(userData) {
     instruments: userData.instruments || [],
     profilePicture: userData.profilePicture || '',
     coverPicture: userData.coverPicture || '',
-    ranking: userData.ranking || Math.floor(Math.random() * 60) + 1,
+    ranking: userData.ranking || secureRandInt(60) + 1,
     level: userData.level || 1,
     followers: userData.followers || 0,
     following: userData.following || 0,

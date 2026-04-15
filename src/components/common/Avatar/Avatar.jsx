@@ -15,7 +15,7 @@ export default function Avatar({ src, name, size = 'md', onClick }) {
     ...dim,
     borderRadius: '50%',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    background: src ? 'transparent' : '#22223a',
+    background: (src && /^https?:\/\//i.test(src)) ? 'transparent' : '#22223a',
     color: '#f59e0b',
     fontWeight: 700,
     overflow: 'hidden',
@@ -25,10 +25,13 @@ export default function Avatar({ src, name, size = 'md', onClick }) {
     userSelect: 'none',
   }
 
+  // Only allow http/https URLs to prevent javascript: XSS
+  const safeSrc = src && /^https?:\/\//i.test(src) ? src : null
+
   return (
     <div style={style} onClick={onClick}>
-      {src
-        ? <img src={src} alt={name ? String(name).replace(/[<>"'&]/g, '') : 'avatar'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} referrerPolicy="no-referrer" />
+      {safeSrc
+        ? <img src={safeSrc} alt="User avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} referrerPolicy="no-referrer" />
         : <span style={{ fontSize: dim.fontSize }}>{getInitials(name)}</span>
       }
     </div>
