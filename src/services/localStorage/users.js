@@ -3,9 +3,14 @@ import { generateId } from '../../utils/formatters.js'
 const KEY = 'bebop_users'
 
 function secureRandInt(max) {
-  const arr = new Uint8Array(1)
-  crypto.getRandomValues(arr)
-  return arr[0] % max
+  const limit = 256 - (256 % max)
+  let val
+  do {
+    const arr = new Uint8Array(1)
+    crypto.getRandomValues(arr)
+    val = arr[0]
+  } while (val >= limit)
+  return val % max
 }
 
 export function getUsers() {
